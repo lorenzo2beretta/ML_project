@@ -10,14 +10,6 @@ class DiffFunction:
         self.function = function
         self.derivative = derivative
 
-    # @param x argument in which evaluating functions
-    #
-    def fun(self, x):
-        return self.function(x)
-
-    # @param
-    def der(self, x):
-        return self.derivative(x)
 
 
 class Layer:
@@ -29,6 +21,12 @@ class Layer:
         self.w = np.random.rand(out_dim, in_dim)
         self.b = np.random.rand(out_dim)
         self.act = act
+        self.tmp_w = np.zeros((out_dim, in_dim))
+        self.tmp_b = np.zeros((out_dim))
+
+    def reset(self):
+        self.tmp_w.fill(0)
+        self.tmp_b.fill(0)
 
     # DEBUG utility
     def __str__(self):
@@ -42,10 +40,10 @@ class Layer:
     def feed_forward(self, x):
         self.x = x
         self.z = np.dot(self.w, self.x) + self.b
-        return self.act.fun(self.z)
+        return self.act.function(self.z)
 
     def propagate_back(self, curr):
-        self.cr_step = curr * self.act.der(self.z)
+        self.cr_step = curr * self.act.derivative(self.z)
         return np.dot(self.cr_step, self.w)
 
     def get_gradient(self):
@@ -72,3 +70,7 @@ class Network:
     def propagate_back(self, curr):
         for layer in reversed(self.layers):
             curr = layer.propagate_back(curr)
+
+    def reset_all(self):
+        for layer in self.layers:
+            layer.reset()
