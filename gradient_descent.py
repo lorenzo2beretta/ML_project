@@ -34,4 +34,5 @@ class GradientDescent:
                 layer.w -= self.lrate * layer.tmp_w
                 layer.b -= self.lrate * layer.tmp_b
 
+            loss /= len(data)
             print((i, loss))

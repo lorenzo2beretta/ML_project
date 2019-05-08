@@ -1,17 +1,5 @@
 import numpy as np
 
-
-# functions get applied componentwise on their own
-class DiffFunction:
-
-    # @param function function to encode
-    # @param derivative derivative of the previous function
-    def __init__(self, function, derivative):
-        self.function = function
-        self.derivative = derivative
-
-
-
 class Layer:
 
     # @param in_dim number of inward nodes
@@ -43,7 +31,7 @@ class Layer:
         return self.act.function(self.z)
 
     def propagate_back(self, curr):
-        self.cr_step = curr * self.act.derivative(self.z)
+        self.cr_step = np.dot(curr, self.act.derivative(self.z))
         return np.dot(self.cr_step, self.w)
 
     def get_gradient(self):
