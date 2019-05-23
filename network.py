@@ -6,8 +6,8 @@ class Layer:
     # @param out_dim number of outward nodes
     # @param act an ActFun object encoding the activation function
     def __init__(self, in_dim, out_dim, act):
-        self.w = np.random.rand(out_dim, in_dim)
-        self.b = np.random.rand(out_dim)
+        self.w = np.random.randn(out_dim, in_dim)
+        self.b = np.random.randn(out_dim)
         self.act = act
         self.tmp_w = np.zeros((out_dim, in_dim))
         self.tmp_b = np.zeros((out_dim))

@@ -2,20 +2,54 @@ from network import *
 from gradient_descent import *
 from utility import *
 
-lrate = 0.5
-epochs = 1000
-size_list = [2, 6, 2]
-network = Network(size_list, reLU, softMax)
+import csv
+import numpy as np
+import random
 
-data = []
-for i in range (100):
-    x = np.random.randint(2, size = 2)
-    data.append((x, [x[0] * x[1], 1 - x[0] * x[1]]))
+def generate_random_data():
+    data = []
+    for i in range (200):
+        x = np.random.randint(4, size = 3)
+        res = (x[0]==x[1]) and (x[2]==2)
+        data.append((x, int(res)))
+    return data
 
-algo = GradientDescent(crossEntropy, lrate, epochs, network)
-algo.train(data)
+def load_monks(filename, val_split=0.05):
+    train_data = []
+    with open("data/"+filename+".test") as infile:
+        reader = csv.reader(infile, delimiter=" ")
+        for row in reader:
+            train_data.append( (np.array([int(x) for x in row[2:8]]), np.array([int(row[1])])) )
+    print("Loaded {} datapoints".format(len(train_data)))
 
-print(network.feed_forward(np.array([0, 1])))
-print(network.feed_forward(np.array([1, 0])))
-print(network.feed_forward(np.array([0, 0])))
-print(network.feed_forward(np.array([1, 1])))
+    test_data = []
+    with open("data/"+filename+".train") as infile:
+        reader = csv.reader(infile, delimiter=" ")
+        for row in reader:
+            test_data.append( (np.array([int(x) for x in row[2:8]]), np.array([int(row[1])])) )
+    print("Loaded {} test datapoints".format(len(test_data)))
+
+    n = int(val_split*len(train_data))
+    random.shuffle(train_data)
+
+    return train_data[:n], train_data[n:], test_data
+
+
+val, train, test = load_monks("monks-1")
+
+lrate = 0.2
+epochs = 3000
+size_list = [6, 5, 5, 1]
+network = Network(size_list, reLU, sigmoid)
+
+algo = GradientDescent(binCrossEntropy, lrate, epochs, network)
+algo.train(train, val)
+
+print(network.feed_forward(np.array([1, 1, 0, 0, 0, 0])))
+print(network.feed_forward(np.array([1, 3, 2, 0, 1, 1])))
+print(network.feed_forward(np.array([3, 0, 2, 1, 4, 1])))
+
+# print(network.feed_forward(np.array([0, 1])))
+# print(network.feed_forward(np.array([1, 0])))
+# print(network.feed_forward(np.array([0, 0])))
+# print(network.feed_forward(np.array([1, 1])))

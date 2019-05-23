@@ -20,7 +20,7 @@ def squareLoss_der(y, lb):
 
 squareLoss = DiffFunction(squareLoss_fun, squareLoss_der)
 
-# -------------- cossEntropy ----------------------
+# -------------- crossEntropy ----------------------
 
 def crossEntropy_fun(y, lb):
     y = np.log(y)
@@ -31,6 +31,29 @@ def crossEntropy_der(y, lb):
     return - y * lb
 
 crossEntropy = DiffFunction(crossEntropy_fun, crossEntropy_der)
+
+# -------------- binaryCrossEntropy ----------------------
+
+def binCrossEntropy_fun(y, lb):
+    tmp = - lb*np.log(y) - (1-lb)*np.log(1-y)
+    return tmp
+
+def binCrossEntropy_der(y, lb):
+    return - lb/y + (1-lb)/(1-y)
+
+binCrossEntropy = DiffFunction(binCrossEntropy_fun, binCrossEntropy_der)
+
+# -------------- sigmoid FUNCTION -----------------
+
+def sigmoid_fun(x):
+    sigm = 1./(1.+np.exp(-x))
+    return sigm
+
+def sigmoid_der(x):
+    sigm = 1./(1.+np.exp(-x))
+    return np.diag(sigm*(1.-sigm))
+
+sigmoid = DiffFunction(sigmoid_fun, sigmoid_der)
 
 # -------------- reLu FUNCTION --------------------
 
