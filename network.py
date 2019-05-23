@@ -6,10 +6,10 @@ class Layer:
     # @param out_dim number of outward nodes
     # @param act an ActFun object encoding the activation function
     def __init__(self, in_dim, out_dim, act, mu):
-        self.w = np.random.randn(out_dim, in_dim)
-        self.b = np.random.randn(out_dim)
+        self.w = np.random.rand(out_dim, in_dim)
+        self.b = np.random.rand(out_dim)
         self.act = act
-        self.mu = mu
+        self.mu = mu # regularization parameter
 
     # DEBUG utility
     def __str__(self):
@@ -40,6 +40,7 @@ class Layer:
 class Network:
     def __init__(self, size_list, inner_act, last_act, mu):
         self.layers = []
+        self.mu = mu
         for i in range (len(size_list) - 2):
             layer = Layer(size_list[i], size_list[i+1], inner_act, mu)
             self.layers.append(layer)

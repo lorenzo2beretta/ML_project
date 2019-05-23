@@ -15,21 +15,23 @@ class GradientDescent:
         for layer in ret.layers:
             layer.w.fill(0)
             layer.b.fill(0)
-        return ret
-        
+        return ret    
+
+    
+    
     # @param data is a list of pairs (input_list, output_list)
     def train(self, data, validation, beta):
         momentum = self.get_null_copy()
-        for j in range (self.epochs):
+        for epoch in range (self.epochs):
             tmp = self.get_null_copy()            
             loss = 0.
-            acc = 0.
+            # acc = 0.
             for x, lb in data:
                 y = self.network.feed_forward(x)
                 # evaluate loss function differential
                 diff = self.loss.derivative(y, lb)
-                if (y<0.5 and lb==0) or (y>0.5 and lb==1):
-                    acc += 1
+                # if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
+                #    acc += 1'''
                 loss += self.loss.function(y, lb)
                 self.network.propagate_back(diff)
                 for i, layer in enumerate(self.network.layers):
@@ -37,6 +39,12 @@ class GradientDescent:
                     grad_w, grad_b = layer.get_gradient()
                     tmp.layers[i].w += grad_w
                     tmp.layers[i].b += grad_b
+                    for y in layer.w:
+                        for x in y:
+                            loss += self.network.mu * x * x
+                    for x in layer.b:
+                        loss += self.network.mu * x * x
+            
             for i, layer in enumerate(self.network.layers):
                 tmp.layers[i].w /= len(data)
                 tmp.layers[i].b /= len(data)
@@ -49,17 +57,21 @@ class GradientDescent:
                 layer.w -= self.lrate * momentum.layers[i].w
                 layer.b -= self.lrate * momentum.layers[i].b
 
+            loss /= len(data)
+            print("epoch = " + str(epoch) + "\t loss = " + str(loss))
+
+            '''
             val_loss = 0
             val_acc = 0.
             for x, lb in validation:
                 y = self.network.feed_forward(x)
                 val_loss += self.loss.function(y, lb)
-                if (y<0.5 and lb==0) or (y>0.5 and lb==1):
+                if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
                     val_acc += 1
-
 
             val_loss /= len(validation)
             val_acc /= len(validation)
-            loss /= len(data)
             acc /= len(data)
             print((j, loss, acc, val_loss, val_acc))
+            '''
+            
