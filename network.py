@@ -5,16 +5,11 @@ class Layer:
     # @param in_dim number of inward nodes
     # @param out_dim number of outward nodes
     # @param act an ActFun object encoding the activation function
-    def __init__(self, in_dim, out_dim, act):
+    def __init__(self, in_dim, out_dim, act, mu):
         self.w = np.random.randn(out_dim, in_dim)
         self.b = np.random.randn(out_dim)
         self.act = act
-        self.tmp_w = np.zeros((out_dim, in_dim))
-        self.tmp_b = np.zeros((out_dim))
-
-    def reset(self):
-        self.tmp_w.fill(0)
-        self.tmp_b.fill(0)
+        self.mu = mu
 
     # DEBUG utility
     def __str__(self):
@@ -36,18 +31,20 @@ class Layer:
 
     def get_gradient(self):
         ret_w = np.outer(self.cr_step, self.x)
+        ret_w += 2 * self.mu * self.w # regularization
         ret_b = self.cr_step
+        ret_b += 2 * self.mu * self.b # regularization
         return (ret_w, ret_b)
 
 
 class Network:
-    def __init__(self, size_list, inner_act, last_act):
+    def __init__(self, size_list, inner_act, last_act, mu):
         self.layers = []
         for i in range (len(size_list) - 2):
-            layer = Layer(size_list[i], size_list[i+1], inner_act)
+            layer = Layer(size_list[i], size_list[i+1], inner_act, mu)
             self.layers.append(layer)
 
-        layer = Layer(size_list[-2], size_list[-1], last_act)
+        layer = Layer(size_list[-2], size_list[-1], last_act, mu)
         self.layers.append(layer)
 
     def feed_forward(self, x):
@@ -58,10 +55,6 @@ class Network:
     def propagate_back(self, curr):
         for layer in reversed(self.layers):
             curr = layer.propagate_back(curr)
-
-    def reset_all(self):
-        for layer in self.layers:
-            layer.reset()
 
     def accuracy(self, data):
         right = 0.

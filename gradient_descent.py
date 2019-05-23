@@ -1,4 +1,5 @@
 from network import *
+import copy
 
 # DELETE THIS F*CKING CLASS, just method train !!
 
@@ -9,11 +10,18 @@ class GradientDescent:
         self.epochs = epochs
         self.network = network
 
+    def get_null_copy(self):
+        ret = copy.deepcopy(self.network)
+        for layer in ret.layers:
+            layer.w.fill(0)
+            layer.b.fill(0)
+        return ret
+        
     # @param data is a list of pairs (input_list, output_list)
-    def train(self, data, validation):
-        for i in range (self.epochs):
-            # reset all weights
-            self.network.reset_all()
+    def train(self, data, validation, beta):
+        momentum = self.get_null_copy()
+        for j in range (self.epochs):
+            tmp = self.get_null_copy()            
             loss = 0.
             acc = 0.
             for x, lb in data:
@@ -24,18 +32,22 @@ class GradientDescent:
                     acc += 1
                 loss += self.loss.function(y, lb)
                 self.network.propagate_back(diff)
-                for layer in self.network.layers:
+                for i, layer in enumerate(self.network.layers):
                     # add gradient to the layer temp data structure
                     grad_w, grad_b = layer.get_gradient()
-                    layer.tmp_w += grad_w
-                    layer.tmp_b += grad_b
-
-            for layer in self.network.layers:
-                layer.tmp_w /= len(data)
-                layer.tmp_b /= len(data)
+                    tmp.layers[i].w += grad_w
+                    tmp.layers[i].b += grad_b
+            for i, layer in enumerate(self.network.layers):
+                tmp.layers[i].w /= len(data)
+                tmp.layers[i].b /= len(data)
                 # updating weights
-                layer.w -= self.lrate * layer.tmp_w
-                layer.b -= self.lrate * layer.tmp_b
+                momentum.layers[i].w *= beta
+                momentum.layers[i].w += (1 - beta) * tmp.layers[i].w
+                momentum.layers[i].b *= beta
+                momentum.layers[i].b += (1 - beta) * tmp.layers[i].b
+                
+                layer.w -= self.lrate * momentum.layers[i].w
+                layer.b -= self.lrate * momentum.layers[i].b
 
             val_loss = 0
             val_acc = 0.
@@ -50,4 +62,4 @@ class GradientDescent:
             val_acc /= len(validation)
             loss /= len(data)
             acc /= len(data)
-            print((i, loss, acc, val_loss, val_acc))
+            print((j, loss, acc, val_loss, val_acc))

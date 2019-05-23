@@ -37,13 +37,15 @@ def load_monks(filename, val_split=0.05):
 
 val, train, test = load_monks("monks-1")
 
-lrate = 0.2
-epochs = 3000
-size_list = [6, 5, 5, 1]
-network = Network(size_list, reLU, sigmoid)
+lrate = 0.01
+mu = 0.001
+epochs = 1000
+beta = 0.95
+size_list = [6, 10, 1]
+network = Network(size_list, reLU, sigmoid, mu)
 
 algo = GradientDescent(binCrossEntropy, lrate, epochs, network)
-algo.train(train, val)
+algo.train(train, val, beta)
 
 print(network.feed_forward(np.array([1, 1, 0, 0, 0, 0])))
 print(network.feed_forward(np.array([1, 3, 2, 0, 1, 1])))

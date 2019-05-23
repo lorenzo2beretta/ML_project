@@ -35,12 +35,17 @@ crossEntropy = DiffFunction(crossEntropy_fun, crossEntropy_der)
 # -------------- binaryCrossEntropy ----------------------
 
 def binCrossEntropy_fun(y, lb):
-    tmp = - lb*np.log(y) - (1-lb)*np.log(1-y)
-    return tmp
-
+    if lb == 0:
+        return - np.log(1. - y)
+    else:
+        return - np.log(y)
+    
 def binCrossEntropy_der(y, lb):
-    return - lb/y + (1-lb)/(1-y)
-
+    if lb == 0:
+        return 1 / (1. - y)
+    else:
+        return - 1. / y
+        
 binCrossEntropy = DiffFunction(binCrossEntropy_fun, binCrossEntropy_der)
 
 # -------------- sigmoid FUNCTION -----------------
@@ -88,7 +93,7 @@ def softMax_der(x):
 
 softMax = DiffFunction(softMax_fun, softMax_der)
 
-# ------------- function to read veryBigData (works with DNN, blockCahins and IoT either) ---------------
+    # ------------- function to read very data  ---------------
 
 def read_monks(file_path):
     data = []
