@@ -2,7 +2,6 @@ from network import *
 from gradient_descent import *
 from utility import *
 
-
 lrate = 0.5
 epochs = 1000
 size_list = [2, 6, 2]

@@ -1,6 +1,6 @@
 from network import *
 
-# DELETE THIS F*CKING CLASS, hust method train !!
+# DELETE THIS F*CKING CLASS, just method train !!
 
 class GradientDescent:
     def __init__(self, loss, lrate, epochs, network):

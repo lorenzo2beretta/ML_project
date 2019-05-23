@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 
 # functions get applied componentwise on their own
 class DiffFunction:
@@ -63,3 +64,14 @@ def softMax_der(x):
     return ret
 
 softMax = DiffFunction(softMax_fun, softMax_der)
+
+# ------------- function to read veryBigData (works with DNN, blockCahins and IoT either) ---------------
+
+def read_monks(file_path):
+    data = []
+    with open(file_path) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=' ')
+        for row in csv_reader:
+            row = map(int, row[1:8])
+            data.append((np.array(row[1:7]), np.array([row[0],1 - row[0]])))
+    return data

@@ -62,3 +62,14 @@ class Network:
     def reset_all(self):
         for layer in self.layers:
             layer.reset()
+
+    def accuracy(self, data):
+        right = 0.
+        for x, y in data:
+            res = self.feed_forward(x)
+            choice = np.argmax(res)
+            if choice == np.argmax(y):
+                right += 1
+
+        return right / len(data)
+    
