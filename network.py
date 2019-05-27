@@ -64,3 +64,10 @@ class Network:
 
         return right / len(data)
     
+    def mee(self, data):
+        ret = 0.
+        for x, y in data:
+            res = self.feed_forward(x)
+            ret += euclideanLoss.function(res, y)
+
+        return ret / len(data)

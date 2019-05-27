@@ -10,7 +10,7 @@ class DiffFunction:
         self.function = function
         self.derivative = derivative
 
-# -------------- SQUARE LOSS FUNCTION --------------
+# -------------- squareLoss function -----------------
 
 def squareLoss_fun(y, lb):
     return np.dot(y - lb, y - lb)
@@ -19,6 +19,17 @@ def squareLoss_der(y, lb):
     return 2 * (y - lb)
 
 squareLoss = DiffFunction(squareLoss_fun, squareLoss_der)
+
+# ------------ euclideanLoss function --------------
+
+def euclideanLoss_fun(y, z):
+    return np.sqrt(np.dot(y - z, y - z))
+
+def euclideanLoss_der(y, z):
+    tmp = (y - z) / 2
+    return tmp / np.sqrt(np.dot(y - z, y - z))
+
+euclideanLoss = DiffFunction(euclideanLoss_fun, euclideanLoss_der)
 
 # -------------- crossEntropy ----------------------
 

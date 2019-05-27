@@ -34,18 +34,19 @@ val, train, test = preprocess_cup()
 
 lrate = 0.1
 mu = 0.001
-epochs = 3000
+epochs = 2000
 beta = 0.95
 
 size_list = [10, 15, 2]
 network = Network(size_list, sigmoid, idn, mu)
 
-algo = GradientDescent(squareLoss, lrate, epochs, network)
+algo = GradientDescent(euclideanLoss, lrate, epochs, network)
 algo.train(train, val, beta)
+
 print("TOPOLOGIA = " + str(size_list))
-print("Train = " + str(network.accuracy(train))) 
-print("Validation = " + str(network.accuracy(val)))
-print("Test = " + str(network.accuracy(test)))
+print("Train = " + str(network.mee(train))) 
+print("Validation = " + str(network.mee(val)))
+
 
 
 
