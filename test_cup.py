@@ -1,7 +1,6 @@
 from network import *
 from gradient_descent import *
 from utility import *
-
 import csv
 import numpy as np
 import random
@@ -33,22 +32,25 @@ def preprocess_cup(val_split=0.25):
 val, train, test = preprocess_cup()
 
 lrate = 0.1
-mu = 0.001
 epochs = 2000
+mu = 0.001
 beta = 0.95
 
-size_list = [10, 15, 2]
-network = Network(size_list, sigmoid, idn, mu)
+size_list = [10, 40, 2]
+network = Network(size_list, tanh, idn, mu)
 
 algo = GradientDescent(euclideanLoss, lrate, epochs, network)
-algo.train(train, val, beta)
+algo.train_batch(train, val, beta, 30)
 
 print("TOPOLOGIA = " + str(size_list))
 print("Train = " + str(network.mee(train))) 
 print("Validation = " + str(network.mee(val)))
 
+# Evaluating average norm of outputs
+norm = 0.
+for x, y in train:
+    norm += euclideanLoss.function(y, np.zeros(2))
 
+norm /= len(train)
 
-
-    
-                            
+print("Avg Norm = " + str(norm))

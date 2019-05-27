@@ -26,8 +26,7 @@ def euclideanLoss_fun(y, z):
     return np.sqrt(np.dot(y - z, y - z))
 
 def euclideanLoss_der(y, z):
-    tmp = (y - z) / 2
-    return tmp / np.sqrt(np.dot(y - z, y - z))
+    return (y - z) / np.sqrt(np.dot(y - z, y - z))
 
 euclideanLoss = DiffFunction(euclideanLoss_fun, euclideanLoss_der)
 
@@ -82,6 +81,27 @@ def reLU_der(x):
     return np.diag(x)
 
 reLU = DiffFunction(reLU_fun, reLU_der)
+
+# ------------- softPlus function -----------------
+
+def softPlus_fun(x):
+    return np.log(1 + np.exp(x))
+
+def softPlus_der(x):
+    x = np.exp(x)
+    return np.diag(x / (1 + x))
+
+softPlus = DiffFunction(softPlus_fun, softPlus_der)
+
+# ---------------- tanh function -------------------
+
+def tanh_fun(x):
+    return np.tanh(x)
+
+def tanh_der(x):
+    return np.diag(1 - np.tanh(x)**2)
+
+tanh = DiffFunction(tanh_fun, tanh_der)
 
 # -------------- softMax FUNCTION ------------------
 
