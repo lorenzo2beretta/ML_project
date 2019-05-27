@@ -58,18 +58,18 @@ class GradientDescent:
             loss /= len(data)
             #print("epoch = " + str(epoch) + "\t loss = " + str(loss))
 
-            '''
+            
             val_loss = 0
-            val_acc = 0.
+            #val_acc = 0.
             for x, lb in validation:
                 y = self.network.feed_forward(x)
                 val_loss += self.loss.function(y, lb)
-                if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
-                    val_acc += 1
+                #if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
+                 #   val_acc += 1
 
             val_loss /= len(validation)
-            val_acc /= len(validation)
-            acc /= len(data)
-            print((j, loss, acc, val_loss, val_acc))
-            '''
+            #val_acc /= len(validation)
+            #acc /= len(data)
+            print((epoch, loss, val_loss))
+            
             

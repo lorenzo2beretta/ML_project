@@ -93,13 +93,12 @@ def softMax_der(x):
 
 softMax = DiffFunction(softMax_fun, softMax_der)
 
-    # ------------- function to read very data  ---------------
+# ---------------- Identity -------------------------
 
-def read_monks(file_path):
-    data = []
-    with open(file_path) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=' ')
-        for row in csv_reader:
-            row = map(int, row[1:8])
-            data.append((np.array(row[1:7]), np.array([row[0],1 - row[0]])))
-    return data
+def idn_fun(x):
+    return x
+
+def idn_der(x):
+    return np.identity(x.size)
+
+idn = DiffFunction(idn_fun, idn_der)

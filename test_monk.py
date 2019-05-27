@@ -6,30 +6,6 @@ import csv
 import numpy as np
 import random
 
-# Old version
-def load_monks(filename, val_split=0.05):
-    train_data = []
-    with open("data/"+filename+".train") as infile:
-        reader = csv.reader(infile, delimiter=" ")
-        for row in reader:
-            label = np.array([int(row[1]), 1 - int(row[1])])
-            train_data.append((np.array([int(x) for x in row[2:8]]), label))
-    print("Loaded {} train datapoints".format(len(train_data)))
-
-    test_data = []
-    with open("data/"+filename+".test") as infile:
-        reader = csv.reader(infile, delimiter=" ")
-        for row in reader:
-            label = np.array([int(row[1]), 1 - int(row[1])])
-            test_data.append((np.array([int(x) for x in row[2:8]]), label) )
-    print("Loaded {} test datapoints".format(len(test_data)))
-
-    n = int(val_split*len(train_data))
-    random.shuffle(train_data)
-
-    return train_data[:n], train_data[n:], test_data
-
-# New version, input format improved
 def preprocess_monks(filename, val_split=0.05):
     train_data = []
     with open("monks/"+filename+".train") as infile:
@@ -66,16 +42,16 @@ def preprocess_monks(filename, val_split=0.05):
 
     return train_data[:n], train_data[n:], test_data
 
-val, train, test = preprocess_monks("monks-3")
+val, train, test = preprocess_monks("monks-1")
 
 
-lrate = 0.45
+lrate = 0.1
 mu = 0.001
-epochs = 10000
+epochs = 3000
 beta = 0.95
 
-size_list = [17, 20, 2]
-network = Network(size_list, sigmoid, softMax, mu)
+size_list = [17, 15, 2]
+network = Network(size_list, reLU, softMax, mu)
 
 algo = GradientDescent(crossEntropy, lrate, epochs, network)
 algo.train(train, val, beta)
