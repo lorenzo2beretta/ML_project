@@ -17,8 +17,6 @@ class GradientDescent:
             layer.b.fill(0)
         return ret    
 
-    
-    
     # @param data is a list of pairs (input_list, output_list)
     def train(self, data, validation, beta):
         momentum = self.get_null_copy()
@@ -58,7 +56,7 @@ class GradientDescent:
                 layer.b -= self.lrate * momentum.layers[i].b
 
             loss /= len(data)
-            print("epoch = " + str(epoch) + "\t loss = " + str(loss))
+            #print("epoch = " + str(epoch) + "\t loss = " + str(loss))
 
             '''
             val_loss = 0

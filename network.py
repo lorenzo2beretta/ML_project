@@ -2,14 +2,11 @@ import numpy as np
 
 class Layer:
 
-    # @param in_dim number of inward nodes
-    # @param out_dim number of outward nodes
-    # @param act an ActFun object encoding the activation function
     def __init__(self, in_dim, out_dim, act, mu):
-        self.w = np.random.rand(out_dim, in_dim)
-        self.b = np.random.rand(out_dim)
+        self.w = np.random.randn(out_dim, in_dim)
+        self.b = np.random.randn(out_dim)
         self.act = act
-        self.mu = mu # regularization parameter
+        self.mu = mu 
 
     # DEBUG utility
     def __str__(self):
