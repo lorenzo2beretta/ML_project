@@ -43,8 +43,9 @@ def run_one_train(size_list, act_fun, loss, lrate, mu, beta, epochs, batch_size,
     return valid_mee
 
 
-def grid_search(size_list, act_fun, epochs, batch_size):
+def grid_search(hidden, act_fun, loss=euclideanLoss, epochs=1000, batch_size=32):
     results = []
+    size_list = [10, hidden, 2]
     for lrate in [0.5, 0.1, 0.01, 0.001]:
         for mu in [0.1, 0.01, 0.001]:
             for beta in [0.1, 0.5, 0.9]:
@@ -56,9 +57,10 @@ def grid_search(size_list, act_fun, epochs, batch_size):
 
 
 
-lrate = 0.05
-epochs = 100
+epochs = 1000
 batch_size = 32
+
+lrate = 0.05
 mu = 0.005
 beta = 0.9
 act_fun = tanh
@@ -66,4 +68,4 @@ loss = euclideanLoss
 
 size_list = [10, 10, 2]
 
-grid_search(size_list, act_fun, epochs, batch_size)
+#grid_search(hidden, act_fun, loss, epochs, batch_size)
