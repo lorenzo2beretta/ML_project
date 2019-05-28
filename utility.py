@@ -6,9 +6,10 @@ class DiffFunction:
 
     # @param function function to encode
     # @param derivative derivative of the previous function
-    def __init__(self, function, derivative):
+    def __init__(self, function, derivative, name):
         self.function = function
         self.derivative = derivative
+        self.name = name
 
 # -------------- squareLoss function -----------------
 
@@ -18,7 +19,7 @@ def squareLoss_fun(y, lb):
 def squareLoss_der(y, lb):
     return 2 * (y - lb)
 
-squareLoss = DiffFunction(squareLoss_fun, squareLoss_der)
+squareLoss = DiffFunction(squareLoss_fun, squareLoss_der, "MSE")
 
 # ------------ euclideanLoss function --------------
 
@@ -28,7 +29,7 @@ def euclideanLoss_fun(y, z):
 def euclideanLoss_der(y, z):
     return (y - z) / np.sqrt(np.dot(y - z, y - z))
 
-euclideanLoss = DiffFunction(euclideanLoss_fun, euclideanLoss_der)
+euclideanLoss = DiffFunction(euclideanLoss_fun, euclideanLoss_der, "MEE")
 
 # -------------- crossEntropy ----------------------
 
@@ -40,7 +41,7 @@ def crossEntropy_der(y, lb):
     y = 1. / y
     return - y * lb
 
-crossEntropy = DiffFunction(crossEntropy_fun, crossEntropy_der)
+crossEntropy = DiffFunction(crossEntropy_fun, crossEntropy_der, "crossEntropy")
 
 # -------------- binaryCrossEntropy ----------------------
 
@@ -49,14 +50,14 @@ def binCrossEntropy_fun(y, lb):
         return - np.log(1. - y)
     else:
         return - np.log(y)
-    
+
 def binCrossEntropy_der(y, lb):
     if lb == 0:
         return 1 / (1. - y)
     else:
         return - 1. / y
-        
-binCrossEntropy = DiffFunction(binCrossEntropy_fun, binCrossEntropy_der)
+
+binCrossEntropy = DiffFunction(binCrossEntropy_fun, binCrossEntropy_der, "binCrossEntropy")
 
 # -------------- sigmoid FUNCTION -----------------
 
@@ -68,7 +69,7 @@ def sigmoid_der(x):
     sigm = 1./(1.+np.exp(-x))
     return np.diag(sigm*(1.-sigm))
 
-sigmoid = DiffFunction(sigmoid_fun, sigmoid_der)
+sigmoid = DiffFunction(sigmoid_fun, sigmoid_der, "sigmoid")
 
 # -------------- reLu FUNCTION --------------------
 
@@ -80,7 +81,7 @@ def reLU_der(x):
     x[x <= 0] = 0
     return np.diag(x)
 
-reLU = DiffFunction(reLU_fun, reLU_der)
+reLU = DiffFunction(reLU_fun, reLU_der, "reLU")
 
 # ------------- softPlus function -----------------
 
@@ -91,7 +92,7 @@ def softPlus_der(x):
     x = np.exp(x)
     return np.diag(x / (1 + x))
 
-softPlus = DiffFunction(softPlus_fun, softPlus_der)
+softPlus = DiffFunction(softPlus_fun, softPlus_der, "softPlus")
 
 # ---------------- tanh function -------------------
 
@@ -101,7 +102,7 @@ def tanh_fun(x):
 def tanh_der(x):
     return np.diag(1 - np.tanh(x)**2)
 
-tanh = DiffFunction(tanh_fun, tanh_der)
+tanh = DiffFunction(tanh_fun, tanh_der, "tanh")
 
 # -------------- softMax FUNCTION ------------------
 
@@ -122,7 +123,7 @@ def softMax_der(x):
 
     return ret
 
-softMax = DiffFunction(softMax_fun, softMax_der)
+softMax = DiffFunction(softMax_fun, softMax_der, "softMax")
 
 # ---------------- Identity -------------------------
 
@@ -132,4 +133,12 @@ def idn_fun(x):
 def idn_der(x):
     return np.identity(x.size)
 
-idn = DiffFunction(idn_fun, idn_der)
+idn = DiffFunction(idn_fun, idn_der, "id")
+
+
+# ------------ accuracy metrics ----------
+def accuracy_single(y, lb):
+    return np.abs(y-lb)<0.5
+
+def accuracy_multi(y, lb):
+    return np.argmax(y) == np.argmax(lb)

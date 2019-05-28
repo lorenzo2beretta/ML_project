@@ -7,7 +7,7 @@ class Layer:
         self.w = np.random.randn(out_dim, in_dim)
         self.b = np.random.randn(out_dim)
         self.act = act
-        self.mu = mu 
+        self.mu = mu
 
     # DEBUG utility
     def __str__(self):
@@ -55,16 +55,15 @@ class Network:
         for layer in reversed(self.layers):
             curr = layer.propagate_back(curr)
 
-    def accuracy(self, data):
+    def accuracy(self, data, acc_type):
         right = 0.
         for x, y in data:
             res = self.feed_forward(x)
-            choice = np.argmax(res)
-            if choice == np.argmax(y):
+            if acc_type(res, y):
                 right += 1
 
         return right / len(data)
-    
+
     def mee(self, data):
         ret = 0.
         for x, y in data:

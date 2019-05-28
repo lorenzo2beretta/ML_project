@@ -4,6 +4,8 @@ from utility import *
 import csv
 import numpy as np
 import random
+import time
+import matplotlib.pyplot as plt
 
 def preprocess_cup(val_split=0.25):
     train_data = []
@@ -31,26 +33,33 @@ def preprocess_cup(val_split=0.25):
 
 val, train, test = preprocess_cup()
 
-lrate = 0.1
+lrate = 0.05
 epochs = 2000
-mu = 0.001
-beta = 0.95
+batch_size = 32
+mu = 0.005
+beta = 0.9
+act_fun = tanh
+loss = euclideanLoss
 
 size_list = [10, 40, 2]
-network = Network(size_list, tanh, idn, mu)
 
-algo = GradientDescent(euclideanLoss, lrate, epochs, network)
-algo.train_batch(train, val, beta, 30)
+now = time.strftime("%c")
 
-print("TOPOLOGIA = " + str(size_list))
-print("Train = " + str(network.mee(train))) 
-print("Validation = " + str(network.mee(val)))
+network = Network(size_list, act_fun, idn, mu)
 
-# Evaluating average norm of outputs
-norm = 0.
-for x, y in train:
-    norm += euclideanLoss.function(y, np.zeros(2))
+algo = GradientDescent(loss, lrate, epochs, network)
+losses, val_losses = algo.train_batch(train, val, beta, batch_size)
 
-norm /= len(train)
+hyperparams = f"lrate={lrate}\tmu={mu}\tbeta={beta}"
+functions = f"activation={act_fun.name}\tloss={loss.name}"
+training = f"epochs={epochs}\tbatch_size={batch_size}"
 
-print("Avg Norm = " + str(norm))
+topology = "TOPOLOGIA = " + str(size_list)
+train_mee = network.mee(train)
+valid_mee = network.mee(val)
+
+with open("experiments_cup.txt", "a") as infile:
+    infile.write(now+"\n"+hyperparams+"\n"+functions+"\n"+training+"\n"+topology+f"\ntrain_mee={train_mee}\tvalid_mee={valid_mee}\n\n")
+
+plt.plot(losses, '-', val_losses, 'r--')
+plt.show()
