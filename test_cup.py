@@ -5,7 +5,7 @@ import csv
 import numpy as np
 import random
 import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 def run_one_train(size_list, act_fun, loss, lrate, mu, beta, epochs, batch_size, debug=False):
