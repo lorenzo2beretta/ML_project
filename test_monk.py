@@ -50,6 +50,7 @@ def preprocess_monks(filename, val_split=0.05, single_out=False):
 
     return train_data[:n], train_data[n:], test_data
 
+val, train, test = preprocess_monks("monks-3")
 
 lrate = 0.008
 mu = 0.01
