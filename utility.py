@@ -1,13 +1,14 @@
 import numpy as np
 import csv
+import random
 
 '''
-This file contains some utility functions. Here is defined the DiffFunction  
-class, consisting of a function and its derivative. Then many DiffFunction  
+This file contains some utility functions. Here is defined the DiffFunction
+class, consisting of a function and its derivative. Then many DiffFunction
 objects are defined: those are activation and loss functions.
 
-Then we can find two utility function to assess the accuracy of a NN  
-classifier. 
+Then we can find two utility function to assess the accuracy of a NN
+classifier.
 
 Finally some more utilty function to read input are included.
 
@@ -17,7 +18,7 @@ Finally some more utilty function to read input are included.
 ''' ----------- DiffFunction ------------
 This class represents a piecewise differentiable function and its derivative.
 
-After its definition a long list loss and activation functions as  
+After its definition a long list loss and activation functions as
 DiffFunction objects.
 
 '''
@@ -30,7 +31,7 @@ class DiffFunction:
 ''' ------------------------------------------------------------
  ----------------------- LOSS FUNCTIONS ------------------------
 ---------------------------------------------------------------- '''
-        
+
 ''' -------------- squareLoss ----------------- '''
 
 def squareLoss_fun(y, lb):
@@ -179,7 +180,7 @@ def accuracy_multi(y, lb):
         return 0
 
 ''' ---------------------- READ UTILITIES -------------------- '''
-    
+
 '''--------- read_monks ---------
 This function read monks-i.test and monks-i.train for i = 1, 2, 3.
 Moreover it encodes one-hot the discrete values of input.
@@ -236,15 +237,15 @@ def read_monks(filename, val_split=0.05, single_out=False):
             data[int(row[6]) + 10] = 1
             data[int(row[7]) + 14] = 1
             test_data.append((data, label))
-            
-    # Splitting training data between train and validation randomly 
+
+    # Splitting training data between train and validation randomly
     n = int(val_split*len(train_data))
     random.shuffle(train_data)
     return train_data[:n], train_data[n:], test_data
 
-    
+
 '''--------- read_cup ---------
-This function read cup.train and cup.test. We produced those files from the  
+This function read cup.train and cup.test. We produced those files from the
 original training set since we needed an internal test set.
 
 Keyword Arguments:
@@ -271,7 +272,7 @@ def read_cup(val_split=0.25):
             data = np.array([float(x) for x in row[0:10]])
             test_data.append((data, label))
 
-    # Splitting training data between train and validation randomly 
+    # Splitting training data between train and validation randomly
     n = int(val_split*len(train_data))
     random.shuffle(train_data)
     return train_data[:n], train_data[n:], test_data

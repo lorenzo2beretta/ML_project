@@ -5,8 +5,8 @@ import math
 ''' -------- gradient_descent ---------
 
 This function implements batched gradient descent with momentum.
-Returns a tuple of lists containing loss and accuracy statistics on training  
-and validation set. 
+Returns a tuple of lists containing loss and accuracy statistics on training
+and validation set.
 
 Keyword Arguments:
 
@@ -29,14 +29,14 @@ bsize -- size of a single batch
 accuracy -- a function defining the outcome of a classification task
 
 '''
-def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, accuracy = None):
+def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, accuracy = None, debug=False):
     # single-batched case
     if not bsize:
         bsize = len(train)
 
-    # get a copy of the network to store momentum   
+    # get a copy of the network to store momentum
     momentum_net = net.get_null_copy()
-    
+
     # list of data to return and eventually plot later
     train_losses = []
     val_losses = []
@@ -46,7 +46,7 @@ def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, a
     # cycling through epochs
     for epoch in range (epochs):
         random.shuffle(train)
-        
+
         # cycling through batches
         for j in range (int(math.ceil(len(train) / bsize))):
             grad_net = net.get_null_copy()
@@ -56,7 +56,7 @@ def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, a
                 y = net.feed_forward(x)
                 diff = loss.derivative(y, lb)
                 net.propagate_back(diff)
-                
+
                 # updating gradients
                 for i, layer in enumerate(net.layers):
                     grad_w, grad_b = layer.get_gradient()
@@ -80,19 +80,21 @@ def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, a
         val_loss = net.avg_loss(val, loss)
         train_losses.append(train_loss)
         val_losses.append(val_loss)
-        
+
         if accuracy:
             # accuracy evaluation
             train_acc = net.accuracy(train, accuracy)
             val_acc = net.accuracy(val, accuracy)
             train_accuracies.append(train_acc)
             val_accuracies.append(val_acc)
-            # print statistics 
-            print((epoch, train_loss, train_acc, val_loss, val_acc))
+            # print statistics
+            if debug:
+                print((epoch, train_loss, train_acc, val_loss, val_acc))
         else:
-            print((epoch, train_loss, val_loss))
+            if debug:
+                print((epoch, train_loss, val_loss))
 
-    # return statistics to plot  
+    # return statistics to plot
     if accuracy:
         return (train_losses, train_accuracies, val_losses, val_accuracies)
     else:
