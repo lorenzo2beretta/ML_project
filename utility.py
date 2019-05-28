@@ -15,7 +15,8 @@ Finally some more utilty function to read input are included.
 
 '''
 
-''' ----------- DiffFunction ------------
+''' ----------------------- DiffFunction -------------------------
+
 This class represents a piecewise differentiable function and its derivative.
 
 After its definition a long list loss and activation functions as
