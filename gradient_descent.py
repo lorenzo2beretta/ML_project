@@ -1,137 +1,99 @@
 from network import *
-import copy
 import random
 import math
 
-# DELETE THIS F*CKING CLASS, just method train !!
+''' -------- gradient_descent ---------
 
-class GradientDescent:
-    def __init__(self, loss, lrate, epochs, network):
-        self.loss = loss
-        self.lrate = lrate
-        self.epochs = epochs
-        self.network = network
+This function implements batched gradient descent with momentum.
+Returns a tuple of lists containing loss and accuracy statistics on training  
+and validation set. 
 
-    def get_null_copy(self):
-        ret = copy.deepcopy(self.network)
-        for layer in ret.layers:
-            layer.w.fill(0)
-            layer.b.fill(0)
-        return ret
+Keyword Arguments:
 
-    def train(self, data, validation, beta):
-        momentum = self.get_null_copy()
-        losses = []
-        val_losses = []
-        for epoch in range (self.epochs):
-            tmp = self.get_null_copy()
-            loss = 0.
-            # acc = 0.
-            for x, lb in data:
-                y = self.network.feed_forward(x)
-                # evaluate loss function differential
-                diff = self.loss.derivative(y, lb)
-                # if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
-                #    acc += 1'''
-                loss += self.loss.function(y, lb)
-                self.network.propagate_back(diff)
-                for i, layer in enumerate(self.network.layers):
-                    # add gradient to the layer temp data structure
+train -- a numpy array of couples (x, y) constituting the training set
+
+val -- a numpy array of couples (x, y) constituting the validation set
+
+beta -- momentum exponential reduction constant
+
+loss -- an object of DiffFunction class constituting the loss function
+
+lrate -- learning rate (usually denoted with eta)
+
+epochs -- number of complete train set parsing cycles
+
+net -- Network object to train
+
+bsize -- size of a single batch
+
+accuracy -- a function defining the outcome of a classification task
+
+'''
+def gradient_descent(train, val, beta, loss, lrate, epochs, net, bsize = None, accuracy = None):
+    # single-batched case
+    if not bsize:
+        bsize = len(train)
+
+    # get a copy of the network to store momentum   
+    momentum_net = net.get_null_copy()
+    
+    # list of data to return and eventually plot later
+    train_losses = []
+    val_losses = []
+    train_accuracies = []
+    val_accuracies = []
+
+    # cycling through epochs
+    for epoch in range (epochs):
+        random.shuffle(train)
+        
+        # cycling through batches
+        for j in range (int(math.ceil(len(train) / bsize))):
+            grad_net = net.get_null_copy()
+
+            # cycling within a batch
+            for x, lb in train[j * bsize: (j + 1) * bsize]:
+                y = net.feed_forward(x)
+                diff = loss.derivative(y, lb)
+                net.propagate_back(diff)
+                
+                # updating gradients
+                for i, layer in enumerate(net.layers):
                     grad_w, grad_b = layer.get_gradient()
-                    tmp.layers[i].w += grad_w
-                    tmp.layers[i].b += grad_b
+                    grad_net.layers[i].w += grad_w
+                    grad_net.layers[i].b += grad_b
 
-            for i, layer in enumerate(self.network.layers):
-                tmp.layers[i].w /= len(data)
-                tmp.layers[i].b /= len(data)
-                # updating weights
-                momentum.layers[i].w *= beta
-                momentum.layers[i].w += (1 - beta) * tmp.layers[i].w
-                momentum.layers[i].b *= beta
-                momentum.layers[i].b += (1 - beta) * tmp.layers[i].b
+            for i, layer in enumerate(net.layers):
+                grad_net.layers[i].w /= bsize
+                grad_net.layers[i].b /= bsize
+                # momentum update
+                momentum_net.layers[i].w *= beta
+                momentum_net.layers[i].w += (1 - beta) * grad_net.layers[i].w
+                momentum_net.layers[i].b *= beta
+                momentum_net.layers[i].b += (1 - beta) * grad_net.layers[i].b
+                # weights update
+                layer.w -= lrate * momentum_net.layers[i].w
+                layer.b -= lrate * momentum_net.layers[i].b
 
-                layer.w -= self.lrate * momentum.layers[i].w
-                layer.b -= self.lrate * momentum.layers[i].b
-
-            loss /= len(data)
-            #print("epoch = " + str(epoch) + "\t loss = " + str(loss))
-
-
-            val_loss = 0
-            #val_acc = 0.
-            for x, lb in validation:
-                y = self.network.feed_forward(x)
-                val_loss += self.loss.function(y, lb)
-                #if ((y[1] - y[0]) * (lb[1] - lb[0]) > 0):
-                 #   val_acc += 1
-
-            val_loss /= len(validation)
-            #val_acc /= len(validation)
-            #acc /= len(data)
-            losses.append(loss)
-            val_losses.append(val_loss)
-            print((epoch, loss, val_loss))
-        return (losses, val_losses)
-
-    def train_batch(self, data, validation, beta, batch_size, accuracy=None):
-        momentum = self.get_null_copy()
-        losses = []
-        val_losses = []
-        accuracies = []
-        val_accuracies = []
-        for epoch in range (self.epochs):
-            random.shuffle(data)
-            loss = 0.
-            acc = 0.
-            for j in range (math.ceil(len(data) / batch_size)):
-                tmp = self.get_null_copy()
-                for x, lb in data[j * batch_size: (j + 1) * batch_size]:
-                    y = self.network.feed_forward(x)
-                    # evaluate loss function differential
-                    diff = self.loss.derivative(y, lb)
-                    if accuracy and accuracy(y,lb):
-                        acc += 1
-                    loss += self.loss.function(y, lb)
-                    self.network.propagate_back(diff)
-                    for i, layer in enumerate(self.network.layers):
-                        # add gradient to the layer temp data structure
-                        grad_w, grad_b = layer.get_gradient()
-                        tmp.layers[i].w += grad_w
-                        tmp.layers[i].b += grad_b
-
-                for i, layer in enumerate(self.network.layers):
-                    tmp.layers[i].w /= batch_size
-                    tmp.layers[i].b /= batch_size
-                    # updating weights
-                    momentum.layers[i].w *= beta
-                    momentum.layers[i].w += (1 - beta) * tmp.layers[i].w
-                    momentum.layers[i].b *= beta
-                    momentum.layers[i].b += (1 - beta) * tmp.layers[i].b
-
-                    layer.w -= self.lrate * momentum.layers[i].w
-                    layer.b -= self.lrate * momentum.layers[i].b
-
-            loss /= len(data)
-            val_loss = 0
-            val_acc = 0.
-            for x, lb in validation:
-                y = self.network.feed_forward(x)
-                val_loss += self.loss.function(y, lb)
-                if accuracy and accuracy(y,lb):
-                    val_acc += 1
-
-            val_loss /= len(validation)
-            losses.append(loss)
-            val_losses.append(val_loss)
-            if accuracy:
-                acc /= len(data)
-                val_acc /= len(validation)
-                accuracies.append(acc)
-                val_accuracies.append(val_acc)
-                print((epoch, loss, acc, val_loss, val_acc))
-            else:
-                print((epoch, loss, val_loss))
-
+        # loss  evaluation
+        train_loss = net.avg_loss(train, loss)
+        val_loss = net.avg_loss(val, loss)
+        train_losses.append(train_loss)
+        val_losses.append(val_loss)
+        
         if accuracy:
-            return (losses, accuracies, val_losses, val_accuracies)
-        return (losses, val_losses)
+            # accuracy evaluation
+            train_acc = net.accuracy(train, accuracy)
+            val_acc = net.accuracy(val, accuracy)
+            train_accuracies.append(train_acc)
+            val_accuracies.append(val_acc)
+            # print statistics 
+            print((epoch, train_loss, train_acc, val_loss, val_acc))
+        else:
+            print((epoch, train_loss, val_loss))
+
+    # return statistics to plot  
+    if accuracy:
+        return (train_losses, train_accuracies, val_losses, val_accuracies)
+    else:
+        return (train_losses, val_losses)

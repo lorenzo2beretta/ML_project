@@ -1,6 +1,20 @@
 from utility import *
+import copy
 import numpy as np
 
+''' ------------------------- Layer -----------------------------
+This class consists of a fully connected layer to be used in a NN.
+It implements three basic methods for feeding the network, apply the  
+back-propagation algorithm and evaluate the gradient.
+
+Fields:
+
+w -- matrix of weights
+b -- vector of biases
+act -- activation function associated to forward neurons
+mu -- regularization parameter
+
+'''
 class Layer:
 
     def __init__(self, in_dim, out_dim, act, mu):
@@ -8,15 +22,6 @@ class Layer:
         self.b = np.random.randn(out_dim)
         self.act = act
         self.mu = mu
-
-    # DEBUG utility
-    def __str__(self):
-        return  "matrix:\n" + \
-                str(self.w) + \
-                "\nbias:\n" + \
-                str(self.b) + \
-                "\nnode values:\n" + \
-                str(self.x)
 
     def feed_forward(self, x):
         self.x = x
@@ -34,8 +39,25 @@ class Layer:
         ret_b += 2 * self.mu * self.b # regularization
         return (ret_w, ret_b)
 
+    
+''' ------------------------- Network ---------------------------
+This class consist of a NN implementing feed-forward and back-propagation.
+It has also attached some utility methods to get a null-initialized copy  
+of its shape and to benchmark its performance over a labelled dataset.
 
+Fields:
+
+layers -- a list of Layer class objects
+
+mu -- regularization parameter
+
+'''
 class Network:
+
+    ''' Initialize the Network discriminating inner layer activation 
+        functions form the function employed in the last one, since
+        it may involve some ad hoc squashing function.
+    '''
     def __init__(self, size_list, inner_act, last_act, mu):
         self.layers = []
         self.mu = mu
@@ -50,24 +72,35 @@ class Network:
         for layer in self.layers:
             x = layer.feed_forward(x)
         return x
-
+    
     def propagate_back(self, curr):
         for layer in reversed(self.layers):
             curr = layer.propagate_back(curr)
 
-    def accuracy(self, data, acc_type):
+    ''' Returns an isomorphic copy which layers' fields are zero initialized  
+    '''
+    def get_null_copy(self):
+        ret = copy.deepcopy(self)
+        for layer in ret.layers:
+            layer.w.fill(0)
+            layer.b.fill(0)
+        return ret
+
+    ''' A couple of function to benchmark Network's performance
+    '''
+    def accuracy(self, data, accuracy):
         right = 0.
         for x, y in data:
             res = self.feed_forward(x)
-            if acc_type(res, y):
+            if accuracy(res, y):
                 right += 1
 
         return right / len(data)
 
-    def mee(self, data):
+    def avg_loss(self, data, loss):
         ret = 0.
         for x, y in data:
             res = self.feed_forward(x)
-            ret += euclideanLoss.function(res, y)
+            ret += loss.function(res, y)
 
         return ret / len(data)

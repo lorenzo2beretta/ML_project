@@ -8,54 +8,11 @@ import random
 import time
 import matplotlib.pyplot as plt
 
-def preprocess_monks(filename, val_split=0.05, single_out=False):
-    train_data = []
-    with open("monks/"+filename+".train") as infile:
-        reader = csv.reader(infile, delimiter=" ")
-        for row in reader:
-            if single_out:
-                label = np.array([int(row[1])])
-            else:
-                label = np.array([int(row[1]), 1 - int(row[1])])
-            data = np.zeros(17)
-            data[int(row[2]) - 1] = 1
-            data[int(row[3]) + 2] = 1
-            data[int(row[4]) + 5] = 1
-            data[int(row[5]) + 7] = 1
-            data[int(row[6]) + 10] = 1
-            data[int(row[7]) + 14] = 1
-            train_data.append((data, label))
-    print("Loaded {} train datapoints".format(len(train_data)))
-
-    test_data = []
-    with open("monks/"+filename+".test") as infile:
-        reader = csv.reader(infile, delimiter=" ")
-        for row in reader:
-            if single_out:
-                label = np.array([int(row[1])])
-            else:
-                label = np.array([int(row[1]), 1 - int(row[1])])
-            data = np.zeros(17)
-            data[int(row[2]) - 1] = 1
-            data[int(row[3]) + 2] = 1
-            data[int(row[4]) + 5] = 1
-            data[int(row[5]) + 7] = 1
-            data[int(row[6]) + 10] = 1
-            data[int(row[7]) + 14] = 1
-            test_data.append((data, label))
-    print("Loaded {} test datapoints".format(len(test_data)))
-
-    n = int(val_split*len(train_data))
-    random.shuffle(train_data)
-
-    return train_data[:n], train_data[n:], test_data
-
-val, train, test = preprocess_monks("monks-3")
+val, train, test = read_monks("monks-3")
 
 lrate = 0.01
 mu = 0.005
 beta = 0.9
-
 epochs = 5000
 batch_size = 32
 
@@ -77,15 +34,19 @@ else:
 
 now = time.strftime("%c")
 
-val, train, test = preprocess_monks(dataset, single_out=single, val_split=0.1)
+val, train, test = read_monks(dataset, single_out=single, val_split=0.1)
 
-algo = GradientDescent(loss, lrate, epochs, network)
 
-losses, accs, val_losses, val_accs = algo.train_batch(train, val, beta, batch_size, accuracy=acc_fun)
+losses, accs, val_losses, val_accs = gradient_descent(train, val, beta, loss, lrate, epochs, network, batch_size, accuracy=acc_fun)
+
+'''
+PLEASE MAKE THIS BACKWARD-COMPATIBLE WITH PYTHON 2
 
 hyperparams = f"lrate={lrate}\tmu={mu}\tbeta={beta}"
 functions = f"activation={act_fun.name}\tloss={loss.name}"
 training = f"epochs={epochs}\tbatch_size={batch_size}"
+
+'''
 
 topology = "TOPOLOGIA = " + str(size_list)
 train_acc = network.accuracy(train, acc_fun)
@@ -93,7 +54,7 @@ valid_acc = network.accuracy(val, acc_fun)
 test_acc = network.accuracy(test, acc_fun)
 print(test_acc)
 
-
+'''
 
 with open("experiments_monks.txt", "a") as infile:
     infile.write(f"{dataset} @ {now}"+"\n" + hyperparams+"\n"+functions+"\n"+training+"\n"+topology + f"\ntrain_acc={train_acc}\tvalid_acc={valid_acc}\ttest_acc={test_acc}\n\n")
@@ -104,3 +65,5 @@ plt.subplot(212)
 plt.plot(accs, '-', val_accs, 'r--')
 plt.savefig(f"monks/plots/{dataset}_{now}.png")
 plt.show()
+
+'''

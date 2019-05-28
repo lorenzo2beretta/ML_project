@@ -1,7 +1,16 @@
 \section{Introduction}
+Our goal is to realize a Neural Network model simulator and apply it to the given problem sets: the 3 monks classification problems and the ML cup regression.
 
+We implemented a feed-forward multi-layer perceptron and several versions of gradient descent: multi-batched, single-batched, with or without momentum and employing various loss functions.
+
+Our main assumption to predict the ML cup blind test values was that the underlying function was smooth and compact supported, so that we could expect to really learn it using a standard MLP. 
 
 \section{Method}
+\subsection{Code}
+We implemented our NN in python and relied on the numpy library for linear algebra operations that are paramount in back propagation algorithm. We put some effort in keeping our code as much parametric as possible in those features that we deemed as relevant for the model adaptation. We defined the class Network basically as a list of Layer class objects and a pair of activation functions (one internal and one for the last layer), this class implements feed-forward and propagate-back methods exploiting the homonym Layer methods as building blocks, thus enhancing code modularity. Moreover we defined a class DiffFunction representing a function and its derivative, so that we could use to initialize our networks.
+
+
+
 
 %%% Local Variables:
 %%% mode: latex
