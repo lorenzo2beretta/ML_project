@@ -49,11 +49,15 @@ def grid_search(act_fun, loss, epochs=1500, batch_size=32):
     for lrate in [0.1, 0.05, 0.01, 0.005, 0.001]:
         for mu in [0.005, 0.001, 0.0005, 0.0001, 0.00005]:
             for beta in [0, 0.8, 0.95]:
-                res = run_one_train(size_list, act_fun, loss, euclideanLoss, lrate, mu, beta, epochs, batch_size, debug=False)
-                print(res, lrate, mu, beta)
-                results.append((res, (lrate, mu, beta)))
+                tot = 0.
+                for _ in range(10):
+                    tot += run_one_train(size_list, act_fun, loss, euclideanLoss, lrate, mu, beta, epochs, batch_size, debug=False)
+                tot /= 10
+                print(tot, lrate, mu, beta)
+                results.append((tot, (lrate, mu, beta)))
     results.sort()
-    print(results[:10])
+    with open("test_cup_{}_{}.txt".format(act_fun.name, loss.name), "w") as f:
+        f.write(str(results))
 
 
 
