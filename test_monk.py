@@ -52,16 +52,17 @@ def preprocess_monks(filename, val_split=0.05, single_out=False):
 
 val, train, test = preprocess_monks("monks-3")
 
-lrate = 0.008
-mu = 0.01
+lrate = 0.01
+mu = 0.005
 beta = 0.9
 
 epochs = 5000
-batch_size = 20
+batch_size = 32
 
 act_fun = tanh
 
-single = False
+dataset = "monks-3"
+single = True
 
 if single:
     size_list = [17, 15, 1]
@@ -76,7 +77,7 @@ else:
 
 now = time.strftime("%c")
 
-val, train, test = preprocess_monks("monks-3", single_out=single, val_split=0.1)
+val, train, test = preprocess_monks(dataset, single_out=single, val_split=0.1)
 
 algo = GradientDescent(loss, lrate, epochs, network)
 
@@ -95,10 +96,11 @@ print(test_acc)
 
 
 with open("experiments_monks.txt", "a") as infile:
-    infile.write(now+"\n"+hyperparams+"\n"+functions+"\n"+training+"\n"+topology+f"\ntrain_acc={train_acc}\tvalid_acc={valid_acc}\ttest_acc={test_acc}\n\n")
+    infile.write(f"{dataset} @ {now}"+"\n" + hyperparams+"\n"+functions+"\n"+training+"\n"+topology + f"\ntrain_acc={train_acc}\tvalid_acc={valid_acc}\ttest_acc={test_acc}\n\n")
 
 plt.subplot(211)
 plt.plot(losses, '-', val_losses, 'r--')
 plt.subplot(212)
 plt.plot(accs, '-', val_accs, 'r--')
+plt.savefig(f"monks/plots/{dataset}_{now}.png")
 plt.show()
