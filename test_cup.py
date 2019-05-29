@@ -7,7 +7,7 @@ import random
 import time
 import matplotlib.pyplot as plt
 import pickle
-
+import itertools
 
 def run_one_train(size_list, act_fun, loss, lrate, mu, beta, epochs, batch_size, debug=False):
     val, train, test = read_cup()
@@ -63,12 +63,13 @@ def grid_search(act_fun, beta, epochs=1500, batch_size=32):
 
 
 def ensembling(lrate, mu, beta, epochs):
-    n = 4
-    best = 2
+    n = 20
+    best = 10
+    size_list = [55, 20, 2]
     networks = []
     for i in range(n):
         print(i)
-        r = run_one_train([10, 20, 2], sigmoid, euclideanLoss, lrate, mu, beta, epochs, 32)
+        r = run_one_train(size_list, sigmoid, euclideanLoss, lrate, mu, beta, epochs, 32)
         print(r[0])
         networks.append(r)
     networks.sort()
@@ -86,7 +87,7 @@ def ensembling(lrate, mu, beta, epochs):
 
 
 
-epochs = 2000
+epochs = 1000
 batch_size = 32
 
 lrate = 0.1
@@ -98,11 +99,85 @@ loss = euclideanLoss
 size_list = [10, 20, 2]
 
 
-#grid_search(hidden, act_fun, loss, epochs, batch_size)
-#val_loss, net = run_one_train(size_list, act_fun, euclideanLoss, lrate, mu, beta, epochs, batch_size, debug=True)
+val, train, test = read_cup()
 
-res, nets = ensembling(lrate, mu, beta, 1500)
-print(res)
 
-with open(f"models/networks_ensemble_{res}.pkl", "wb") as f:
-    pickle.dump(nets, f)
+# tot_mee = 0.
+# for _ in range(10):
+#     val_loss, net = run_one_train(size_list, act_fun, loss, lrate, mu, beta, epochs, batch_size, debug=True)
+#     tot_mee += net.avg_loss(test, loss)
+#
+# print(tot_mee / 10)
+
+# res, nets = ensembling(lrate, mu, beta, 1000)
+# print(res)
+#
+# with open(f"models/networks_ensemble_{res}.pkl", "wb") as f:
+#     pickle.dump(nets, f)
+
+ten = "models/networks_ensemble_1.0850775830603638.pkl"
+ff = "models/networks_ensemble_1.0627232513968625.pkl"
+with open(ff, "rb") as f:
+    nets = pickle.load(f)
+
+with open(ten, "rb") as f:
+    nets2 = pickle.load(f)
+
+# diffs = []
+
+#
+# n_avg = 15
+# tot_mee = 0.
+# for x,y in test:
+#     avg = np.zeros(2)
+#     for i in range(n_avg):
+#         avg += nets[i][1].feed_forward(x)
+#     avg /= n_avg
+#     diffs.append(avg-y)
+#     tot_mee += euclideanLoss.function(avg, y)
+#
+# diffs = np.array(diffs)
+#
+# print(tot_mee / len(test), np.mean(diffs, axis=0), np.std(diffs, axis=0))
+
+
+test_set_in = []
+test_set_10 = []
+with open("cup/ML-CUP18-TS.csv", "r") as infile:
+    reader = csv.reader(infile, delimiter=",")
+    for row in reader:
+        vars = [float(x) for x in row[1:11]]
+        data = np.array(vars+[vars[i]*vars[j] for i, j in itertools.combinations(range(10),2) ])
+        test_set_in.append(data)
+        test_set_10.append(np.array(vars))
+
+n_avg = 15
+results = []
+results_10 = []
+for x in test_set_in:
+    avg = np.zeros(2)
+    for i in range(n_avg):
+        avg += nets[i][1].feed_forward(x)
+    cur_res = avg / n_avg
+    results.append(cur_res)
+
+n_avg = 10
+for x in test_set_10:
+    avg = np.zeros(2)
+    for i in range(n_avg):
+        avg += nets2[i][1].feed_forward(x)
+    cur_res = avg / n_avg
+    results_10.append(cur_res)
+
+results = np.array(results)
+results_10 = np.array(results_10)
+diff = results-results_10
+print(np.linalg.norm(diff,axis=1).mean())
+
+plt.scatter(results[:,0],results[:,1])
+plt.show()
+
+with open("results_ML-CUP18-TS.csv", "w") as outfile:
+    writer = csv.writer(outfile, delimiter=",")
+    for i,r in enumerate(results):
+        writer.writerow([i+1, r[0], r[1]])
