@@ -8,7 +8,7 @@ import time
 #import matplotlib.pyplot as plt
 
 
-def run_one_train(size_list, act_fun, loss, eval_loss, lrate, mu, beta, epochs, batch_size, debug=False):
+def run_one_train(size_list, act_fun, loss, lrate, mu, beta, epochs, batch_size, debug=False):
     val, train, test = read_cup()
     now = time.strftime("%c")
 
@@ -39,24 +39,23 @@ def run_one_train(size_list, act_fun, loss, eval_loss, lrate, mu, beta, epochs, 
         plt.show()
     '''
 
-    valid_mee = network.avg_loss(val, eval_loss)
+    valid_mee = network.avg_loss(val, loss)
     return valid_mee
 
 
-def grid_search(act_fun, loss, epochs=1500, batch_size=32):
+def grid_search(act_fun, beta, epochs=1500, batch_size=32):
     results = []
     size_list = [10, 20, 2]
     for lrate in [0.1, 0.05, 0.01, 0.005, 0.001]:
-        for mu in [0.005, 0.001, 0.0005, 0.0001, 0.00005]:
-            for beta in [0, 0.8, 0.95]:
+        for mu in [0.005, 0.001, 0.0005, 0.0001]:
                 tot = 0.
                 for _ in range(10):
-                    tot += run_one_train(size_list, act_fun, loss, euclideanLoss, lrate, mu, beta, epochs, batch_size, debug=False)
+                    tot += run_one_train(size_list, act_fun, euclideanLoss, lrate, mu, beta, epochs, batch_size, debug=False)
                 tot /= 10
                 print(tot, lrate, mu, beta)
                 results.append((tot, (lrate, mu, beta)))
     results.sort()
-    with open("test_cup_{}_{}.txt".format(act_fun.name, loss.name), "w") as f:
+    with open("test_cup_{}_{}.txt".format(act_fun.name, str(beta)), "w") as f:
         f.write(str(results))
 
 
