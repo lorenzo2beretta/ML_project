@@ -12,16 +12,19 @@ Our main assumption to predict the ML cup blind test values was that the underly
 
 We implemented our NN in \texttt{Python 2.7.13} and relied on the \texttt{numpy} library for linear algebra operations that are paramount in back propagation algorithm. We put some effort in keeping our code as much parametric as possible in those features that we deemed as relevant for the model definition so that we would have been able to adapt it along the way.
 
-In file \texttt{network.py} you can find the class Network that is basically a list of Layer class objects and a pair of activation functions (one internal and one for the last layer, often required of a different kind). This class implements feed-forward and propagate-back methods exploiting the homonym Layer methods as building blocks, thus enhancing code modularity. Moreover we defined a class DiffFunction representing a function and its derivative, so that we could easily initialize our networks.
+\paragraph{}
+In file \texttt{network.py} you can find the class Network that is basically a list of Layer class objects and a pair of activation functions (one internal and one for the last layer, often required of a different kind). This class implements feed-forward and propagate-back methods exploiting the homonym Layer methods as building blocks, thus enhancing code modularity. The Layer class is composed of a numpy matrix, a bias array, an activation function and a parameter devoted to regularization. We chose to finally initialize layers using a normal distribution of mean 0 and variance 1 for each entry as advised in literature although different choices (like flat 0-symmetric distributions) did not make any real difference in terms of accuracy or loss.
 
+\paragraph{}
 In file \texttt{gradient\_descent.py} we implemented \texttt{gradient\_descent} procedure keeping it parametric in batch size so that we could make more trials over different batch sizes, we implemented also momentum parametric in $\beta$ so that we could tune it or even shut it down during our model development.
 Finally we chose to regularize adding to the loss function the squared norm of weights multiplied by $\lambda$ (\texttt{mu} in code, since lambda is a python keyword) as a penalty term. As far as stopping criterion is concerned at a first glance we deferred its implementation and then found it useless since our learning plots just stabilized after 1000 epochs.
 
-In file \texttt{utility.py} we coded 4 different activation functions (\texttt{tanh}, \texttt{softMax}, \texttt{softPlus}, \texttt{reLU}, \texttt{identity}), 4 different loss functions (\texttt{crossEntropy}, \texttt{binaryCrossEntropy}, \texttt{euclideanLoss}, \texttt{squaredLoss}) looking for the best combo, a couple of accuracy evaluators and some I/O formatting related procedures.
+\paragraph{}
+In file \texttt{utility.py} defined a class DiffFunction representing a function and its derivative, so that we could easily initialize our networks.Then we coded 4 different activation functions (\texttt{tanh}, \texttt{softMax}, \texttt{softPlus}, \texttt{reLU}, \texttt{identity}), 4 different loss functions (\texttt{crossEntropy}, \texttt{binaryCrossEntropy}, \texttt{euclideanLoss}, \texttt{squaredLoss}) belonging to that class. At the end of the file you can find a couple of accuracy evaluators and some I/O formatting related procedures.
 
 \subsection{Preprocessing}
 
-Our first attempt did not encoded monks inputs one-hot and it was way more impeded to achieve the 100\% accuracy, easily conquered later exploiting the suggested preprocessing. We analyzed cup input data finding that they were normalized yet, indeed they are distributed exactly as a normal density of mean 0 and variance 1, so we did not apply any transformation. Cup output was always less than 30 in norm thus we regarded a normalization as useless. Our last model employed a little input preprocessing: we fed not only inputs but even their pairwise products. Apart from that we did not employ any tricky preprocessing as in monks case. 
+Our first attempt did not encoded monks inputs one-hot and it was way more impeded to achieve the 100\% accuracy, easily conquered later exploiting the suggested preprocessing. We analyzed cup input data finding that they were normalized yet, indeed they are distributed exactly as a normal density of mean 0 and variance 1, so we did not apply any transformation. Cup output was always less than 30 in norm thus we regarded a normalization as useless. Our last model employed a little input preprocessing: we fed not only inputs but even their pairwise products. Apart from that we did not employ any tricky preprocessing as in monks case.
 
 \subsection{Validation Scheme}
 
@@ -30,7 +33,10 @@ Monks dataset was endowed of an explicit test set to finally assess the model pe
 \subsection{Trials Pursued}
 
 Monks started working with 100\% accuracy immediately after adopting one-hot encoding, we had just to pay some attention to regularization for the 3rd set.
-Cup dataset was trickier and it required us to try the heuristics described above (and in deeper details in experiments section) first manually trying to guess the right order of magnitude for parameters and then with a more exhaustive grid search. In the end we put our best (ranked for increasing validation risk) trained network in an ensemble and our final model just outputs the average of their feed-forward outputs. 
+
+\paragraph{}
+Cup dataset was trickier and it required us to try the heuristics described above (and in deeper details in experiments section) first manually trying to guess the right order of magnitude for parameters and then with a more exhaustive grid search. Once found the best possible NN model we tried to slightly modify our approach trying to filter out the noise: we trained a batch of 20 networks separately and ranked them for increasing loss on validation, took the bests and averaged their feed-forward results on test set assessing that this performed slightly better than each one taken separately. In the end we tried the pairwise products input preprocessing, combined with the previous heuristic, finding that it performed again slightly better. 
+
 
 %%% Local Variables:
 %%% mode: latex
