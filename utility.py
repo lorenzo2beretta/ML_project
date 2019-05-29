@@ -67,13 +67,13 @@ crossEntropy = DiffFunction(crossEntropy_fun, crossEntropy_der, "crossEntropy")
 
 ''' -------------- binaryCrossEntropy -------------- '''
 
-def binCrossEntropy_fun(y, lb):
+def binaryCrossEntropy_fun(y, lb):
     if lb == 0:
         return - np.log(1. - y)
     else:
         return - np.log(y)
 
-def binCrossEntropy_der(y, lb):
+def binaryCrossEntropy_der(y, lb):
     if lb == 0:
         return 1 / (1. - y)
     else:
@@ -182,7 +182,7 @@ def accuracy_multi(y, lb):
 
 ''' ---------------------- READ UTILITIES -------------------- '''
 
-'''--------- read_monks ---------
+'''-------------------------- read_monks -------------------------
 This function read monks-i.test and monks-i.train for i = 1, 2, 3.
 Moreover it encodes one-hot the discrete values of input.
 
@@ -195,7 +195,7 @@ val_split -- fraction of training devoted to validation
 single_out -- boolean to decide how to encode output
 
 '''
-def read_monks(filename, val_split=0.05, single_out=False):
+def read_monks(filename, val_split=0.25, single_out=False):
     # Reading train data
     train_data = []
     with open("monks/"+filename+".train") as infile:

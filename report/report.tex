@@ -1,14 +1,13 @@
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
-\usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{graphicx}
 
 \setlength\parindent{0pt}
 
 \title{Neural Network Implementation}
-\author{Lorenzo Beretta \href{mailto:loribere@gmail.com}{\url{loribere@gmail.com}}\\
-  Riccardo Zanotto \href{mailto:riccardo.zanotto@sns.it}{\url{riccardo.zanotto@sns.it}}
+\author{Lorenzo Beretta, \texttt{loribere@gmail.com}\\
+  Riccardo Zanotto, \texttt{riccardo.zanotto@sns.it}
   \and Project A of ML course (654AA), A.Y. 2018-19}
 \date{30th May 2019}
 
@@ -16,7 +15,7 @@
 \maketitle
 
 \begin{abstract}
-  We developed a type (A) project implementing a neural network in python and exploiting the linear algebra functions of numpy. We structured our code abstracting over the NN topology, hyper-parameters, activation and loss functions in a highly modular fashion thanks to the object oriented features of python.  
+  We developed a type (A) project implementing a neural network in python and exploiting the linear algebra library numpy. We structured our code abstracting over every hyper-parameter in a highly modular fashion. We chose the best topology and parameters through cross validation, finally we assessed our model over an internal test.  
 \end{abstract}
 
 \input{00.intro}
