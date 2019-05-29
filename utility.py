@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 import random
+import itertools
 
 '''
 This file contains some utility functions. Here is defined the DiffFunction
@@ -261,6 +262,8 @@ def read_cup(val_split=0.25):
         reader = csv.reader(infile, delimiter=",")
         for row in reader:
             label = np.array([float(row[10]), float(row[11])])
+            #vars = [float(x) for x in row[0:10]]
+            #data = np.array(vars+[vars[i]*vars[j] for i, j in itertools.combinations(range(10),2) ])
             data = np.array([float(x) for x in row[0:10]])
             train_data.append((data, label))
 
@@ -270,6 +273,8 @@ def read_cup(val_split=0.25):
         reader = csv.reader(infile, delimiter=",")
         for row in reader:
             label = np.array([float(row[10]), float(row[11])])
+            #vars = [float(x) for x in row[0:10]]
+            #data = np.array(vars+[vars[i]*vars[j] for i, j in itertools.combinations(range(10),2) ])
             data = np.array([float(x) for x in row[0:10]])
             test_data.append((data, label))
 

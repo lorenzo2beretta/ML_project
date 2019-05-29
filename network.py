@@ -4,7 +4,7 @@ import numpy as np
 
 ''' ------------------------- Layer -----------------------------
 This class consists of a fully connected layer to be used in a NN.
-It implements three basic methods for feeding the network, apply the  
+It implements three basic methods for feeding the network, apply the
 back-propagation algorithm and evaluate the gradient.
 
 Fields:
@@ -39,10 +39,10 @@ class Layer:
         ret_b += 2 * self.mu * self.b # regularization
         return (ret_w, ret_b)
 
-    
+
 ''' ------------------------- Network ---------------------------
 This class consist of a NN implementing feed-forward and back-propagation.
-It has also attached some utility methods to get a null-initialized copy  
+It has also attached some utility methods to get a null-initialized copy
 of its shape and to benchmark its performance over a labelled dataset.
 
 Fields:
@@ -54,7 +54,7 @@ mu -- regularization parameter
 '''
 class Network:
 
-    ''' Initialize the Network discriminating inner layer activation 
+    ''' Initialize the Network discriminating inner layer activation
         functions form the function employed in the last one, since
         it may involve some ad hoc squashing function.
     '''
@@ -72,12 +72,12 @@ class Network:
         for layer in self.layers:
             x = layer.feed_forward(x)
         return x
-    
+
     def propagate_back(self, curr):
         for layer in reversed(self.layers):
             curr = layer.propagate_back(curr)
 
-    ''' Returns an isomorphic copy which layers' fields are zero initialized  
+    ''' Returns an isomorphic copy which layers' fields are zero initialized
     '''
     def get_null_copy(self):
         ret = copy.deepcopy(self)
