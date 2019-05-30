@@ -16,8 +16,9 @@ cup/
 cup/cup.train
 cup/cup.test
 
----- a file containing CUP blind test results
+---- files containing CUP blind test results and abstract
 DragonDrinkers_ML-CUP18-TS.csv
+DragonDrinkers_abstract.txt
 
 ---- source code files (read report or comments to delve into 'em)
 gradient_descent.py
