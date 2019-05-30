@@ -1,11 +1,6 @@
 from network import *
 from gradient_descent import *
 from utility import *
-import csv
-import numpy as np
-import random
-import time
-import matplotlib.pyplot as plt
 
 '''
 This file is devoted to test monks datasets. You can launch a test running  

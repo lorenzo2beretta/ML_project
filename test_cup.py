@@ -30,7 +30,7 @@ loss = euclideanLoss
 
 ''' ------------------------------------------------------------- '''
 
-network = Network(size_list, act_fun, sigmoid, mu)
+network = Network(size_list, act_fun, idn, mu)
 
 val, train, test = read_cup()
 
