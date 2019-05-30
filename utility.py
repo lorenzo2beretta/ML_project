@@ -80,7 +80,7 @@ def binaryCrossEntropy_der(y, lb):
     else:
         return - 1. / y
 
-binCrossEntropy = DiffFunction(binCrossEntropy_fun, binCrossEntropy_der, "binCrossEntropy")
+binaryCrossEntropy = DiffFunction(binaryCrossEntropy_fun, binaryCrossEntropy_der, "binCrossEntropy")
 
 ''' ------------------------------------------------------------
  ----------------------- ACTIVATION FUNCTIONS ------------------
@@ -217,7 +217,6 @@ def read_monks(filename, val_split=0.25, single_out=False):
             data[int(row[6]) + 10] = 1
             data[int(row[7]) + 14] = 1
             train_data.append((data, label))
-    print("Loaded {} train datapoints".format(len(train_data)))
 
     # Reading test data
     test_data = []

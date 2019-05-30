@@ -7,7 +7,7 @@ This class consists of a fully connected layer to be used in a NN.
 It implements three basic methods for feeding the network, apply the
 back-propagation algorithm and evaluate the gradient.
 
-Fields:
+Attributes:
 
 w -- matrix of weights
 b -- vector of biases
@@ -45,7 +45,7 @@ This class consist of a NN implementing feed-forward and back-propagation.
 It has also attached some utility methods to get a null-initialized copy
 of its shape and to benchmark its performance over a labelled dataset.
 
-Fields:
+Attributes:
 
 layers -- a list of Layer class objects
 
@@ -86,7 +86,17 @@ class Network:
             layer.b.fill(0)
         return ret
 
-    ''' A couple of function to benchmark Network's performance
+    ''' 
+    A function to benchmark Network's performance on a classification task
+    
+    Parameters:
+
+    data -- dataset, a list of couple (input, label)
+
+    accuracy -- a function to evaluate if the value outputted is accurate
+
+    Returns: the accuracy value
+
     '''
     def accuracy(self, data, accuracy):
         right = 0.
@@ -97,6 +107,18 @@ class Network:
 
         return right / len(data)
 
+    ''' 
+    A function to benchmark Network's performance on a regression task
+    
+    Parameters:
+
+    data -- dataset, a list of couple (input, output)
+
+    loss -- a function to evaluate the loss on a single input
+
+    Returns: the average loss function value
+
+    '''
     def avg_loss(self, data, loss):
         ret = 0.
         for x, y in data:
@@ -104,3 +126,4 @@ class Network:
             ret += loss.function(res, y)
 
         return ret / len(data)
+
