@@ -1,0 +1,4 @@
+We used a min-batch gradient descent with momentum and regularization.
+We performed a preprocessing enhancing the input with pairwise products.
+Finally we adopted an ensemble approach taking the average of the best candidates.
+
